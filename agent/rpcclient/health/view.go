@@ -22,7 +22,7 @@ type MaterializerDeps struct {
 	Logger hclog.Logger
 }
 
-func newMaterializerRequest(srvReq *structs.ServiceSpecificRequest) func(index uint64) pbsubscribe.SubscribeRequest {
+func newMaterializerRequest(srvReq structs.ServiceSpecificRequest) func(index uint64) pbsubscribe.SubscribeRequest {
 	// conn, err := bd.GRPCConnPool.ClientConn(bd.RuntimeConfig.Datacenter)
 	//		if err != nil {
 	//			return err
@@ -49,7 +49,7 @@ func newMaterializerRequest(srvReq *structs.ServiceSpecificRequest) func(index u
 func newMaterializer(
 	deps MaterializerDeps,
 	newRequestFn func(uint64) pbsubscribe.SubscribeRequest,
-	req *structs.ServiceSpecificRequest,
+	req structs.ServiceSpecificRequest,
 ) (*submatview.Materializer, error) {
 	view, err := newHealthView(req)
 	if err != nil {
@@ -73,7 +73,7 @@ func newMaterializer(
 	}), nil
 }
 
-func newHealthView(req *structs.ServiceSpecificRequest) (*healthView, error) {
+func newHealthView(req structs.ServiceSpecificRequest) (*healthView, error) {
 	fe, err := newFilterEvaluator(req)
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ type filterEvaluator interface {
 	Evaluate(datum interface{}) (bool, error)
 }
 
-func newFilterEvaluator(req *structs.ServiceSpecificRequest) (filterEvaluator, error) {
+func newFilterEvaluator(req structs.ServiceSpecificRequest) (filterEvaluator, error) {
 	var evaluators []filterEvaluator
 
 	typ := reflect.TypeOf(structs.CheckServiceNode{})
